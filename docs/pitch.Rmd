@@ -1,0 +1,52 @@
+---
+title: "Pitch"
+author: "Declan Oberlies"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# load packeges ----
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(leaflet)
+library(patchwork)
+library(tidyr)
+```
+
+For my second data story,I will investigate how top food producing countries, such as the US, are using land to produce food. In my analysis, I will look at how the land is used, whether for rangeland or farmland, and staple crop type, and how this relates to the country's carbon footprint, and hydrologic footprint. I will then synthesize all this to determine which country has the most sustainable agricultural industry, or how each country could change their agriculture to be more sustainable.
+
+first I will use [this data set](https://ourworldindata.org/agricultural-production#explore-data-on-agricultural-production) about agricultural production to make a graph and help determine which countries are top food producers.
+
+I will then pivot to [this data set](https://ourworldindata.org/land-use#how-has-global-land-use-changed-over-the-long-term) about land use type. I will zoom in on the countries that were top food producers as identified by the previous dataset. I will look at how their land use has changed over time. 
+
+```{r example land use graph, echo=FALSE, warning=FALSE, message=FALSE}
+# Land use  ====================================================================
+# https://ourworldindata.org/land-use#how-has-global-land-use-changed-over-the-long-term
+url <- 'https://ourworldindata.org/grapher/land-use-over-the-long-term.csv?v=1&csvType=full&useColumnShortNames=true'
+Land_use <- read_csv(url)
+USland_use <-
+  Land_use %>% 
+  filter( year %in% seq(from = 1770, to = 2023, by = 10), 
+          entity == 'United States') %>% 
+   pivot_longer(cols = uopp_c:cropland_c,
+                names_to = "land_type",
+                values_to = "ha")
+
+ggplot(USland_use,
+       aes(x = year,
+           y = ha,
+           colour = land_type)) +
+  geom_path()
+
+```
+
+
+for each of these top food producing countries I want to look at which crops they are growing using [this data set](https://ourworldindata.org/grapher/land-area-per-crop-type?tab=table), and compare that to how much water the country is using from [this data set](https://ourworldindata.org/grapher/agricultural-water-as-a-share-of-total-water-withdrawals?tab=table) and/or carbon footprint from agriculture from [this data set](https://ourworldindata.org/grapher/ghg-emissions-by-sector?tab=table) to determine the sustainability of the countries agg industry.
+
+I am aware that this is a very big project that I am proposing, and so I plan to use iterative code to streamline the process. Once I have the data visualized, I will be able to pick 2 countries that I want to actually tell the story about. This will most likely be any combination of the USA, Brazil, China, or India, and that will become clear once I explore the data fully through the methods described above. 
+
+
